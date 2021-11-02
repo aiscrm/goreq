@@ -68,10 +68,8 @@ func (r *Resp) SetError(err error) {
 }
 
 // Consume close response body
-func (r *Resp) Consume(read bool) {
-	if read {
-		_, _ = r.AsBytes()
-	} else if r.body == nil {
+func (r *Resp) Consume() {
+	if r.body == nil {
 		r.response.Body.Close()
 		r.body = []byte{}
 	}
@@ -84,7 +82,7 @@ func (r *Resp) Bytes() []byte {
 }
 
 // AsBytes returns response body as []byte,
-// return error if error happend when reading
+// return error if error happened when reading
 // the response body
 func (r *Resp) AsBytes() ([]byte, error) {
 	if r.err != nil {
@@ -114,7 +112,7 @@ func (r *Resp) String() string {
 }
 
 // AsString returns response body as string,
-// return error if error happend when reading
+// return error if error happened when reading
 // the response body
 func (r *Resp) AsString() (string, error) {
 	data, err := r.AsBytes()

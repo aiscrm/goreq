@@ -9,14 +9,12 @@ import (
 	"time"
 )
 
-var (
-	DefaultClient = NewClient()
-)
+var DefaultClient = NewClient()
 
 type Client interface {
 	Init(...Option) error
 	Options() Options
-	Use(...HandlerFunc)
+	Use(...HandlerFunc) Client
 	Do(*Req) *Resp
 	Clone(opts ...Option) Client
 	NewReq() *Req
@@ -50,7 +48,7 @@ func (c *client) Init(opts ...Option) error {
 		o(&c.options)
 	}
 	// init http client
-	c.httpClient = newHttpClient(c.options)
+	c.httpClient = newHTTPClient(c.options)
 	return nil
 }
 
@@ -58,13 +56,14 @@ func (c *client) Options() Options {
 	return c.options
 }
 
-func (c *client) Use(handlers ...HandlerFunc) {
+func (c *client) Use(handlers ...HandlerFunc) Client {
 	finalSize := len(c.handlers) + len(handlers)
 	mergedHandlers := make(HandlerChain, finalSize)
 	copy(mergedHandlers, c.handlers[:len(c.handlers)-1])
 	copy(mergedHandlers[len(c.handlers)-1:finalSize-1], handlers)
 	copy(mergedHandlers[finalSize-1:], c.handlers[len(c.handlers)-1:])
 	c.handlers = mergedHandlers
+	return c
 }
 
 func (c *client) Clone(opts ...Option) Client {
@@ -103,7 +102,7 @@ func (c *client) PostReq(rawURL string) *Req {
 	return c.NewReq().WithURL(rawURL).WithMethod(http.MethodPost)
 }
 
-func newHttpClient(options Options) *http.Client {
+func newHTTPClient(options Options) *http.Client {
 	var jar *cookiejar.Jar
 	if options.EnableCookie {
 		jar, _ = cookiejar.New(nil)
@@ -115,7 +114,7 @@ func newHttpClient(options Options) *http.Client {
 			DialContext: (&net.Dialer{
 				Timeout:   options.DialTimeout,
 				KeepAlive: options.DialKeepAlive,
-				//DualStack: true,
+				// DualStack: true,
 			}).DialContext,
 			MaxIdleConns:          options.MaxIdleConns,
 			IdleConnTimeout:       options.IdleConnTimeout,

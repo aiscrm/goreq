@@ -208,7 +208,7 @@ func (r *Req) WithBinaryBody(body []byte) *Req {
 // WithJSONBody convert body to json data
 func (r *Req) WithJSONBody(body interface{}) *Req {
 	r.WithContentType(ContentTypeJSON)
-	//data, err := json.Marshal(body)
+	// data, err := json.Marshal(body)
 	data, err := r.client.Options().Codecs.Get(codec.JSONCodec).Marshal(body)
 	if err != nil {
 		r.err = err
@@ -220,7 +220,7 @@ func (r *Req) WithJSONBody(body interface{}) *Req {
 // WithXMLBody convert body to xml data
 func (r *Req) WithXMLBody(body interface{}) *Req {
 	r.WithContentType(ContentTypeXML)
-	//data, err := xml.Marshal(body)
+	// data, err := xml.Marshal(body)
 	data, err := r.client.Options().Codecs.Get(codec.XMLCodec).Marshal(body)
 	if err != nil {
 		r.err = err
@@ -473,7 +473,6 @@ func (r *Req) Build() (*http.Request, error) {
 
 		r.WithBinaryBody(body.Bytes())
 		r.WithContentType(bodyWriter.FormDataContentType())
-
 	} else {
 		if len(r.formParams) > 0 {
 			r.WithBinaryBody([]byte(r.formParams.Encode()))

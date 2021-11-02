@@ -8,8 +8,10 @@ import (
 	"io/ioutil"
 )
 
-type HandlerFunc func(ctx *Context)
-type HandlerChain []HandlerFunc
+type (
+	HandlerFunc  func(*Context)
+	HandlerChain []HandlerFunc
+)
 
 func DumpHandler() HandlerFunc {
 	return func(ctx *Context) {

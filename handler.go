@@ -13,6 +13,16 @@ type (
 	HandlerChain []HandlerFunc
 )
 
+func Recovery() HandlerFunc {
+	return func(ctx *Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+	}
+}
+
 func DumpHandler() HandlerFunc {
 	return func(ctx *Context) {
 		ctx.Next()

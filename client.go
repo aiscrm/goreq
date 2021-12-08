@@ -14,12 +14,15 @@ var DefaultClient = NewClient()
 type Client interface {
 	Init(...Option) error
 	Options() Options
+	Clone(opts ...Option) Client
 	Use(...HandlerFunc) Client
 	Do(*Req) *Resp
-	Clone(opts ...Option) Client
-	NewReq() *Req
-	GetReq(rawURL string) *Req
-	PostReq(rawURL string) *Req
+	New() *Req
+	Get(rawURL string) *Req
+	Post(rawURL string) *Req
+	Put(rawURL string) *Req
+	Delete(rawURL string) *Req
+	Head(rawURL string) *Req
 }
 
 func NewClient(opts ...Option) Client {
@@ -90,16 +93,28 @@ func (c *client) Do(r *Req) *Resp {
 	return ctx.Resp
 }
 
-func (c *client) NewReq() *Req {
+func (c *client) New() *Req {
 	return New().WithClient(c)
 }
 
-func (c *client) GetReq(rawURL string) *Req {
-	return c.NewReq().WithURL(rawURL).WithMethod(http.MethodGet)
+func (c *client) Get(rawURL string) *Req {
+	return c.New().WithURL(rawURL).WithMethod(http.MethodGet)
 }
 
-func (c *client) PostReq(rawURL string) *Req {
-	return c.NewReq().WithURL(rawURL).WithMethod(http.MethodPost)
+func (c *client) Post(rawURL string) *Req {
+	return c.New().WithURL(rawURL).WithMethod(http.MethodPost)
+}
+
+func (c *client) Put(rawURL string) *Req {
+	return c.New().WithURL(rawURL).WithMethod(http.MethodPut)
+}
+
+func (c *client) Delete(rawURL string) *Req {
+	return c.New().WithURL(rawURL).WithMethod(http.MethodDelete)
+}
+
+func (c *client) Head(rawURL string) *Req {
+	return c.New().WithURL(rawURL).WithMethod(http.MethodHead)
 }
 
 func newHTTPClient(options Options) *http.Client {

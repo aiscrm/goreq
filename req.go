@@ -74,6 +74,14 @@ func New() *Req {
 	}
 }
 
+// Use 仅在当前请求范围生效的中间件，不会改变到DefaultClient
+func (r *Req) Use(handlers ...HandlerFunc) *Req {
+	c := r.client.Clone()
+	c.Use(handlers...)
+	r.WithClient(c)
+	return r
+}
+
 // WithName to identify this request, for trace mostly.
 func (r *Req) WithName(name string) *Req {
 	r.name = name

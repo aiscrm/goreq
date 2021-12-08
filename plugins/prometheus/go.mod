@@ -5,7 +5,7 @@ go 1.17
 replace github.com/aiscrm/goreq => ../../
 
 require (
-	github.com/aiscrm/goreq v0.2.0
+	github.com/aiscrm/goreq v0.2.4
 	github.com/prometheus/client_golang v1.11.0
 )
 

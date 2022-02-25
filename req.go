@@ -29,6 +29,8 @@ const (
 
 	Accept                 = "Accept"
 	UserAgent              = "User-Agent"
+	Referer                = "Referer"
+	Origin                 = "Origin"
 	ContentEncoding        = "Content-Encoding"
 	ContentEncodingGzip    = "gzip"
 	ContentEncodingDeflate = "deflate"
@@ -138,10 +140,28 @@ func (r *Req) WithContentType(contentType string) *Req {
 func (r *Req) WithUserAgent(userAgent string) *Req {
 	if userAgent == "" {
 		// r.request.header.Del(UserAgent)
-		r.header.Del(userAgent)
+		r.header.Del(UserAgent)
 		return r
 	}
 	return r.WithHeader(UserAgent, userAgent)
+}
+
+// WithReferer is to set Referer header
+func (r *Req) WithReferer(referer string) *Req {
+	if referer == "" {
+		r.header.Del(Referer)
+		return r
+	}
+	return r.WithHeader(Referer, referer)
+}
+
+// WithOrigin is to set Origin header
+func (r *Req) WithOrigin(origin string) *Req {
+	if origin == "" {
+		r.header.Del(Origin)
+		return r
+	}
+	return r.WithHeader(Origin, origin)
 }
 
 // WithLazyBody 仅将内容原封不动的保存在Req中，交由Handler对lazyBody处理后在转换为实际的Request中的body

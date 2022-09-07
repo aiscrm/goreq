@@ -12,6 +12,9 @@ import (
 	"github.com/aiscrm/goreq"
 )
 
+const spanPrefix = "req"
+const spanDelimiter = ":"
+
 func Trace(opts ...Option) goreq.HandlerFunc {
 	options := Options{}
 	for _, o := range opts {
@@ -19,7 +22,11 @@ func Trace(opts ...Option) goreq.HandlerFunc {
 	}
 	tracer := otel.Tracer(options.ServiceName)
 	return func(ctx *goreq.Context) {
-		_, span := tracer.Start(ctx.Req.Context(), getSpanName(ctx.Req.GetMethod(), ctx.Req.GetURL()))
+		name := ctx.Req.GetName()
+		if name == "" {
+			name = ctx.Req.GetHost() + spanDelimiter + ctx.Req.GetPath()
+		}
+		_, span := tracer.Start(ctx.Req.Context(), strings.Join([]string{spanPrefix, name}, spanDelimiter))
 		defer span.End()
 		ctx.Next()
 		span.SetAttributes(attribute.Key("http.method").String(ctx.Req.GetMethod()))
@@ -38,14 +45,4 @@ func Trace(opts ...Option) goreq.HandlerFunc {
 			span.AddEvent("dump.response", trace.WithAttributes(attribute.Key("body").String(string(respData))))
 		}
 	}
-}
-
-func getSpanName(str ...string) string {
-	sb := strings.Builder{}
-	sb.WriteString("req")
-	for _, s := range str {
-		sb.WriteString(":")
-		sb.WriteString(s)
-	}
-	return sb.String()
 }

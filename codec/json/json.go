@@ -36,7 +36,6 @@ func (j stdCodec) Marshal(v interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
-	// return json.Marshal(v)
 }
 
 func (j stdCodec) Unmarshal(data []byte, v interface{}) error {

@@ -392,6 +392,24 @@ func (r *Req) GetURL() string {
 	return r.rawURL
 }
 
+// GetHost return request host
+func (r *Req) GetHost() string {
+	u, err := url.Parse(r.GetURL())
+	if err != nil {
+		return ""
+	}
+	return u.Host
+}
+
+// GetPath return request path
+func (r *Req) GetPath() string {
+	u, err := url.Parse(r.GetURL())
+	if err != nil {
+		return ""
+	}
+	return u.Path
+}
+
 // GetMethod return request method
 func (r *Req) GetMethod() string {
 	return r.method

@@ -96,6 +96,28 @@ func (r *Resp) AsBytes() ([]byte, error) {
 	return r.body, r.err
 }
 
+func (r *Resp) AsStream() (<-chan []byte, error) {
+	if r.err != nil {
+		return nil, r.err
+	}
+	c := make(chan []byte)
+	if r.body != nil {
+		c <- r.body
+		return c, nil
+	}
+	defer r.response.Body.Close()
+	buf := make([]byte, 1024)
+	for {
+		n, err := r.response.Body.Read(buf)
+		if err != nil {
+			r.err = err
+			break
+		}
+		c <- buf[:n]
+	}
+	return c, r.err
+}
+
 // AsReader returns response body as reader
 func (r *Resp) AsReader() (io.Reader, error) {
 	data, err := r.AsBytes()

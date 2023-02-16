@@ -30,6 +30,10 @@ func NewCodec(opts ...codec.Option) codec.Codec {
 
 func (j sonicCodec) Marshal(v interface{}) ([]byte, error) {
 	switch vv := v.(type) {
+	case []byte:
+		return vv, nil
+	case string:
+		return []byte(vv), nil
 	case json.Marshaler:
 		return vv.MarshalJSON()
 	case encoding.BinaryMarshaler:

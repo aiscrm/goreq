@@ -2,6 +2,7 @@ package goreq
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -100,21 +101,28 @@ func (r *Resp) AsStream() (<-chan []byte, error) {
 	if r.err != nil {
 		return nil, r.err
 	}
-	c := make(chan []byte)
 	if r.body != nil {
-		c <- r.body
-		return c, nil
+		return nil, errors.New("repeat read")
 	}
-	defer r.response.Body.Close()
-	buf := make([]byte, 1024)
-	for {
-		n, err := r.response.Body.Read(buf)
-		if err != nil {
-			r.err = err
-			break
+	c := make(chan []byte)
+	go func() {
+		defer func() {
+			err := r.response.Body.Close()
+			if err != nil {
+				panic(err)
+			}
+		}()
+		buf := make([]byte, 4096)
+		for {
+			n, err := r.response.Body.Read(buf)
+			if err != nil {
+				r.err = err
+				break
+			}
+			c <- buf[:n]
 		}
-		c <- buf[:n]
-	}
+		close(c)
+	}()
 	return c, r.err
 }
 

@@ -2,7 +2,6 @@ package goreq
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -95,35 +94,6 @@ func (r *Resp) AsBytes() ([]byte, error) {
 	defer r.response.Body.Close()
 	r.body, r.err = ioutil.ReadAll(r.response.Body)
 	return r.body, r.err
-}
-
-func (r *Resp) AsStream() (<-chan []byte, error) {
-	if r.err != nil {
-		return nil, r.err
-	}
-	if r.body != nil {
-		return nil, errors.New("repeat read")
-	}
-	c := make(chan []byte)
-	go func() {
-		defer func() {
-			err := r.response.Body.Close()
-			if err != nil {
-				panic(err)
-			}
-		}()
-		buf := make([]byte, 4096)
-		for {
-			n, err := r.response.Body.Read(buf)
-			if err != nil {
-				r.err = err
-				break
-			}
-			c <- buf[:n]
-		}
-		close(c)
-	}()
-	return c, r.err
 }
 
 // AsReader returns response body as reader

@@ -55,6 +55,9 @@ func (rs *RespStream) Read() (eventName string, data string, err error) {
 	}
 	var line []byte
 	line, err = rs.readData()
+	if err != nil {
+		return
+	}
 	if len(rs.curEventName) == 0 {
 		return StreamEventMessage, string(line), nil
 	} else {

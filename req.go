@@ -164,6 +164,12 @@ func (r *Req) WithOrigin(origin string) *Req {
 	return r.WithHeader(Origin, origin)
 }
 
+func (r *Req) WithStreamHeaders() *Req {
+	return r.WithHeader("Accept", "text/event-stream; charset=utf-8").
+		WithHeader("Cache-Control", "no-cache").
+		WithHeader("Connection", "keep-alive")
+}
+
 // WithLazyBody 仅将内容原封不动的保存在Req中，交由Handler对lazyBody处理后在转换为实际的Request中的body
 func (r *Req) WithLazyBody(lazyBody interface{}) *Req {
 	r.lazyBody = lazyBody

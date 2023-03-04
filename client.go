@@ -124,13 +124,14 @@ func newHTTPClient(options Options) *http.Client {
 	}
 	transport := options.Transport
 	if transport == nil {
+		dialer := &net.Dialer{
+			Timeout:   options.DialTimeout,
+			KeepAlive: options.DialKeepAlive,
+			//DualStack: true,
+		}
 		transport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   options.DialTimeout,
-				KeepAlive: options.DialKeepAlive,
-				// DualStack: true,
-			}).DialContext,
+			Proxy:                 http.ProxyFromEnvironment,
+			DialContext:           dialer.DialContext,
 			MaxIdleConns:          options.MaxIdleConns,
 			IdleConnTimeout:       options.IdleConnTimeout,
 			TLSHandshakeTimeout:   options.TLSHandshakeTimeout,

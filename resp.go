@@ -1,6 +1,7 @@
 package goreq
 
 import (
+	"bufio"
 	"bytes"
 	"io"
 	"io/ioutil"
@@ -171,6 +172,19 @@ func (r *Resp) AsFile(dest string) error {
 	// defer r.response.Body.Close()
 	// _, err = io.Copy(file, r.response.Body)
 	// return err
+}
+
+// AsStream for SSE(Server-Sent Events)
+func (r *Resp) AsStream() *RespStream {
+	respStream := &RespStream{
+		err:      r.err,
+		response: r.response,
+		state:    StreamStateOpen,
+	}
+	if r.err == nil {
+		respStream.reader = bufio.NewReader(respStream.response.Body)
+	}
+	return respStream
 }
 
 func (r *Resp) Dump() string {

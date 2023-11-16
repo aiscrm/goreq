@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -93,7 +92,7 @@ func (r *Resp) AsBytes() ([]byte, error) {
 		return r.body, nil
 	}
 	defer r.response.Body.Close()
-	r.body, r.err = ioutil.ReadAll(r.response.Body)
+	r.body, r.err = io.ReadAll(r.response.Body)
 	return r.body, r.err
 }
 

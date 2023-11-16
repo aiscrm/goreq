@@ -35,7 +35,7 @@ func NewClient(opts ...Option) Client {
 		return &Context{}
 	}
 
-	c.handlers = append(c.handlers, Recovery(), CompressHandler(), c.doHandler())
+	c.handlers = append(c.handlers, Recovery(), c.doHandler())
 	return c
 }
 

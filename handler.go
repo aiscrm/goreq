@@ -5,7 +5,7 @@ import (
 	"compress/gzip"
 	"compress/zlib"
 	"fmt"
-	"io/ioutil"
+	"io"
 )
 
 type (
@@ -26,7 +26,7 @@ func Recovery() HandlerFunc {
 func DumpHandler() HandlerFunc {
 	return func(ctx *Context) {
 		ctx.Next()
-		ctx.Resp.Request().Body = ioutil.NopCloser(bytes.NewReader(ctx.Req.GetBody()))
+		ctx.Resp.Request().Body = io.NopCloser(bytes.NewReader(ctx.Req.GetBody()))
 		fmt.Println(ctx.Resp.Dump())
 	}
 }

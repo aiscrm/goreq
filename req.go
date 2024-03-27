@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -383,7 +382,7 @@ func (r *Req) AddFileContent(fieldName, fileName string, content []byte) *Req {
 	r.uploads = append(r.uploads, FileUpload{
 		FieldName: fieldName,
 		FileName:  fileName,
-		File:      ioutil.NopCloser(bytes.NewReader(content)),
+		File:      io.NopCloser(bytes.NewReader(content)),
 	})
 	return r
 }
@@ -532,7 +531,7 @@ func (r *Req) Build() (*http.Request, error) {
 		}
 	}
 	if len(r.body) > 0 {
-		request.Body = ioutil.NopCloser(bytes.NewReader(r.body))
+		request.Body = io.NopCloser(bytes.NewReader(r.body))
 		request.ContentLength = int64(len(r.body))
 	}
 	if r.header != nil {

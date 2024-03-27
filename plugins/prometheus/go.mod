@@ -1,22 +1,18 @@
 module github.com/aiscrm/goreq/plugins/prometheus
 
-go 1.17
-
-replace github.com/aiscrm/goreq => ../../
+go 1.19
 
 require (
-	github.com/aiscrm/goreq v0.2.4
-	github.com/prometheus/client_golang v1.11.0
+	github.com/aiscrm/goreq v0.3.3
+	github.com/prometheus/client_golang v1.19.0
 )
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cespare/xxhash/v2 v2.1.1 // indirect
-	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.26.0 // indirect
-	github.com/prometheus/procfs v0.6.0 // indirect
-	golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40 // indirect
-	google.golang.org/protobuf v1.26.0-rc.1 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/prometheus/client_model v0.5.0 // indirect
+	github.com/prometheus/common v0.48.0 // indirect
+	github.com/prometheus/procfs v0.12.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
+	google.golang.org/protobuf v1.32.0 // indirect
 )

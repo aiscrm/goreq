@@ -70,7 +70,7 @@ func (rs *RespStream) readData() ([]byte, error) {
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			rs.Close()
-			return []byte{}, err
+			return []byte{}, nil
 		}
 	}
 	line = bytes.TrimSpace(line)

@@ -9,8 +9,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
-	"time"
 )
 
 type (
@@ -55,19 +53,7 @@ func LogHandler(logger ...Logger) HandlerFunc {
 		respBody, _ := ctx.Resp.AsBytes()
 		var l Logger
 		if len(logger) == 0 {
-			jsonHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-				AddSource: true,
-				Level:     slog.LevelInfo,
-				ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-					if a.Key == slog.TimeKey {
-						if t, ok := a.Value.Any().(time.Time); ok {
-							a.Value = slog.StringValue(t.Format("2006-01-02 15:04:05"))
-						}
-					}
-					return a
-				},
-			})
-			l = slog.New(jsonHandler)
+			l = slog.Default()
 		} else {
 			l = logger[0]
 		}

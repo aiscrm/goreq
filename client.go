@@ -140,9 +140,10 @@ func newHTTPClient(options Options) *http.Client {
 		}
 	}
 	return &http.Client{
-		Jar:       jar,
-		Transport: transport,
-		Timeout:   options.Timeout,
+		Jar:           jar,
+		Transport:     transport,
+		Timeout:       options.Timeout,
+		CheckRedirect: options.CheckRedirect,
 	}
 }
 

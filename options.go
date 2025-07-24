@@ -32,6 +32,7 @@ type Options struct {
 	Codecs                codec.Codecs
 	PrefixPath            string // prefix path for all request
 	Errors                []error
+	CheckRedirect         func(req *http.Request, via []*http.Request) error
 }
 
 type Option func(options *Options)
@@ -51,6 +52,7 @@ func NewOptions() Options {
 		Proxy:                 nil,
 		Codecs:                make(map[string]codec.Codec),
 		Errors:                []error{},
+		CheckRedirect:         nil,
 	}
 	options.Codecs.Set(codec.JSONCodec, json.NewCodec())
 	options.Codecs.Set(codec.XMLCodec, xml.NewCodec())
@@ -126,5 +128,19 @@ func WithCodec(codec codec.Codec) Option {
 func WithPrefixPath(prefixPath string) Option {
 	return func(options *Options) {
 		options.PrefixPath = prefixPath
+	}
+}
+
+func WithCheckRedirect(checkRedirect func(req *http.Request, via []*http.Request) error) Option {
+	return func(options *Options) {
+		options.CheckRedirect = checkRedirect
+	}
+}
+
+func DisableRedirect() Option {
+	return func(options *Options) {
+		options.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
 	}
 }
